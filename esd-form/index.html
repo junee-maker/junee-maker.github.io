@@ -17,7 +17,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Goth
 .lc button{width:100%;background:#4359FF;color:#fff;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 .lc button:hover{background:#3248e0}
 .lerr{font-size:12px;color:#e53e3e;margin-top:8px;display:none}
-#mainApp{display:none;padding:18px}
+#mainApp{display:none;padding:18px;max-width:1200px;min-width:900px;margin:0 auto}
 .ph{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .ph img{height:24px}
 .pt{font-size:14px;font-weight:700;flex:1}
@@ -25,7 +25,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Goth
 .sb-ok{background:#e6f9ee;color:#2da44e}
 .sb-ing{background:#fff8e0;color:#b7791f}
 .sb-err{background:#fff0f0;color:#e53e3e}
-.root{display:grid;grid-template-columns:420px 1fr;gap:0;border:1px solid #ccc;border-radius:12px;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.1)}
+.root{display:grid;grid-template-columns:400px 1fr;gap:0;border:1px solid #ccc;border-radius:12px;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.1)}
 .pL{border-right:1px solid #d8d8d8;padding:18px;background:#fff;overflow-y:auto;max-height:calc(100vh - 72px)}
 .pR{background:#ededef;padding:18px;display:flex;flex-direction:column;overflow-y:auto;max-height:calc(100vh - 72px)}
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
@@ -77,7 +77,7 @@ input[type=color]{width:50px;height:32px;padding:2px;border-radius:6px;cursor:po
 .ep-hdr-title{font-weight:700;font-size:14px;margin-bottom:2px}
 .ep-hdr-order{font-size:12px;color:#555}
 .ep-body{padding:20px 26px 0}
-.ep-tbl{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+.ep-tbl{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px;table-layout:fixed}
 .ep-tbl th{background:#f5f5f5;text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;font-weight:700;font-size:12px;white-space:nowrap}
 .ep-tbl th.tc{text-align:center}
 .ep-tbl td{border-bottom:1px solid #ebebeb;padding:10px 12px;vertical-align:top;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
@@ -118,7 +118,7 @@ input[type=color]{width:50px;height:32px;padding:2px;border-radius:6px;cursor:po
 
 <div class="root">
 <div class="pL">
-  <div class="ib">📧 아웃룩 기본 계정을 <strong>digitalzone@daoudata.co.kr</strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
+  <div class="ib">📧 아웃룩 기본 계정을 <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0a4a9a7a9b4a1acbaafaea580a4a1afb5a4a1b4a1eea3afeeabb2">[email&#160;protected]</a></strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
 
   <div class="sh">
     <span class="sl">제품 프리셋</span>
@@ -278,7 +278,7 @@ input[type=color]{width:50px;height:32px;padding:2px;border-radius:6px;cursor:po
 
 <div id="copyTarget"></div>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getFirestore,doc,getDoc,setDoc,collection,getDocs,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -482,13 +482,13 @@ function buildEmailHTML(){
 </div>
 
 <div style="padding:20px 26px">
-  <table style="margin-bottom:18px;width:100%;border-collapse:collapse;border-spacing:0">
+  <table style="margin-bottom:18px;width:100%;min-width:580px;border-collapse:collapse;border-spacing:0;table-layout:fixed">
     <tbody>
       <tr style="background-color:#f5f5f5">
-        <th style="text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;width:22%"><span style="font-weight:700">주문번호</span></th>
-        <th style="text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;width:28%"><span style="font-weight:700">상품명</span></th>
-        <th style="text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px"><span style="font-weight:700">제품키</span></th>
-        <th style="text-align:center;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;width:8%"><span style="font-weight:700">수량</span></th>
+        <th style="text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;width:180px;white-space:nowrap"><span style="font-weight:700">주문번호</span></th>
+        <th style="text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;width:220px;white-space:nowrap"><span style="font-weight:700">상품명</span></th>
+        <th style="text-align:left;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;white-space:nowrap"><span style="font-weight:700">제품키</span></th>
+        <th style="text-align:center;border-top:1px solid #e0e0e0;border-bottom:2px solid #e0e0e0;padding:8px 12px;width:60px;white-space:nowrap"><span style="font-weight:700">수량</span></th>
       </tr>
       <tr>
         <td style="border-bottom:1px solid #ebebeb;padding:10px 12px;vertical-align:top">${orderNo||"-"}</td>
@@ -530,20 +530,22 @@ function downloadEml(){
 }
 window.downloadEml=downloadEml;
 
-function copyRichHTML(){
-  const t=document.getElementById("copyTarget");t.innerHTML=buildEmailHTML();
-  const sel=window.getSelection(),range=document.createRange();range.selectNodeContents(t);sel.removeAllRanges();sel.addRange(range);
-  try{document.execCommand("copy");showCopied("✓ 서식 복사됨 — 아웃룩 본문에 Ctrl+V");}
-  catch(e){navigator.clipboard.writeText(buildEmailHTML()).then(()=>showCopied("✓ 복사됨"));}
-  sel.removeAllRanges();t.innerHTML="";
+async function copyRichHTML(){
+  const html=buildEmailHTML();
+  try{
+    await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([getPlainBody()],{type:"text/plain"})})]);
+    showCopied("✓ 서식 복사됨 — 아웃룩 본문에 Ctrl+V");
+  }catch(e){
+    // fallback: execCommand
+    const t=document.getElementById("copyTarget");t.innerHTML=html;
+    const sel=window.getSelection(),range=document.createRange();range.selectNodeContents(t);sel.removeAllRanges();sel.addRange(range);
+    try{document.execCommand("copy");showCopied("✓ 서식 복사됨 — 아웃룩 본문에 Ctrl+V");}
+    catch(e2){navigator.clipboard.writeText(getPlainBody()).then(()=>showCopied("✓ 텍스트로 복사됨"));}
+    sel.removeAllRanges();t.innerHTML="";
+  }
 }
 window.copyRichHTML=copyRichHTML;
 function copyPlain(){navigator.clipboard.writeText(getPlainBody()).then(()=>showCopied("✓ 텍스트 복사됨"));}
 window.copyPlain=copyPlain;
 function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
-function flash(id){const n=document.getElementById(id);n.style.display="block";setTimeout(()=>n.style.display="none",2200);}
-
-["orderNo","custName","custEmail","prodName","qty","swKeys"].forEach(id=>{document.getElementById(id).addEventListener("input",updateCert);});
-</script>
-</body>
-</html>
+function flash(id){const n=document.getElementById(id);n.

@@ -9,7 +9,7 @@
 <title>디지털존 ESD 발송 폼</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:14px;color:#1a1a1a;background:#e2e2e4;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:14px;color:#1a1a1a;background:#fff;min-height:100vh}
 
 /* ── LOGIN ── */
 #loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh}
@@ -29,7 +29,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Goth
 
 /* ── MAIN ── */
 #mainApp{display:none;padding:16px}
-.ph{display:flex;align-items:center;gap:10px;margin-bottom:14px;max-width:1600px;margin-left:auto;margin-right:auto}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:14px;width:1900px;margin-left:auto;margin-right:auto}
 .ph-logo{height:24px;object-fit:contain}
 .pt{font-size:14px;font-weight:700;flex:1}
 .sb{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
@@ -37,9 +37,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Goth
 .sb-ing{background:#fff8e0;color:#b7791f}
 .sb-err{background:#fff0f0;color:#e53e3e}
 
-.root{display:grid;grid-template-columns:500px 1fr;gap:0;border:1px solid #ccc;border-radius:12px;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.1);max-width:1600px;margin:0 auto}
+.root{display:grid;grid-template-columns:500px 1400px;gap:0;border:1px solid #ccc;border-radius:12px;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.1);margin:0 auto;width:fit-content}
 .pL{border-right:1px solid #d8d8d8;padding:20px;background:#fff;overflow-y:auto;max-height:calc(100vh - 70px)}
-.pR{background:#e0e0e2;padding:20px;display:flex;flex-direction:column;overflow-y:auto;max-height:calc(100vh - 70px)}
+.pR{background:#f5f5f5;padding:20px;display:flex;flex-direction:column;overflow-y:auto;max-height:calc(100vh - 70px)}
 
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
 .sl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.09em}
@@ -82,9 +82,9 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 /* ── RIGHT PANEL ── */
 .pvbar{font-size:13px;color:#555;background:#fff;border:1px solid #ddd;border-radius:7px;padding:9px 13px;margin-bottom:13px;line-height:1.8}
 .pvbar strong{color:#1a1a1a}
-.ep-scroll{overflow-x:auto}
+.ep-scroll{overflow-x:hidden}
 /* Email preview — fixed 1200px */
-.ep-doc{background:#fff;width:1200px;min-width:1000px;max-width:1200px;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000;box-shadow:0 2px 16px rgba(0,0,0,.18)}
+.ep-doc{background:#fff;width:1160px;min-width:1160px;max-width:1160px;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000;box-shadow:0 2px 16px rgba(0,0,0,.18)}
 .ep-hdr{padding:24px 32px;border-bottom:2px solid #eeeeee}
 .ep-hdr-logo{text-align:right;margin-bottom:10px}
 .ep-hdr-logo img{height:34px;object-fit:contain}
@@ -780,4 +780,40 @@ window.copyPlain=copyPlain;
 
 
 function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
-function flash(id){const n=document.getElementById(id);n.styl
+function flash(id){const n=document.getElementById(id);if(n){n.style.display="block";setTimeout(()=>n.style.display="none",2200);}}
+
+["orderNo","custName","custEmail","prodName","qty","swKeys"].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener("input",updateCert);
+});
+
+const dbf=document.getElementById("delBrandFor");
+if(dbf) dbf.addEventListener("change",refreshSels);
+
+// 로고 업로드
+const lfi=document.getElementById("logoFileInput");
+if(lfi) lfi.addEventListener("change",function(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    currentLogoSrc=ev.target.result;emailLogoSrc=ev.target.result;
+    const ll=document.getElementById("loginLogo");if(ll)ll.src=currentLogoSrc;
+    const hl=document.getElementById("headerLogo");if(hl)hl.src=currentLogoSrc;
+    const el2=document.getElementById("epLogoImg");if(el2)el2.src=emailLogoSrc;
+    localStorage.setItem("dz_logo",currentLogoSrc);
+  };
+  reader.readAsDataURL(file);
+});
+
+// 저장된 로고 복원
+(function(){
+  const saved=localStorage.getItem("dz_logo");
+  if(saved){
+    currentLogoSrc=saved;emailLogoSrc=saved;
+    const ll=document.getElementById("loginLogo");if(ll)ll.src=saved;
+  }
+})();
+
+</script>
+</body>
+</html>

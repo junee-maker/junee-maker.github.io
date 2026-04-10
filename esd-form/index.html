@@ -306,6 +306,7 @@ document.addEventListener("keydown", function(e){
     <button class="btn bpri" onclick="downloadEml()">📧 아웃룩으로 열기 (.eml)</button>
     <button class="btn bsec" onclick="copyRichHTML()">증서 복사 (서식 포함)</button>
     <button class="btn bsec" onclick="copyPlain()">텍스트 복사</button>
+    <button class="btn bsec" onclick="printPDF()">🖨️ PDF 저장</button>
     <span class="copied" id="copiedBadge"></span>
   </div>
   <p class="hint">
@@ -780,6 +781,40 @@ window.copyRichHTML=copyRichHTML;
 function copyPlain(){navigator.clipboard.writeText(getPlainBody()).then(()=>showCopied("✓ 텍스트 복사됨"));}
 window.copyPlain=copyPlain;
 
+
+function printPDF(){
+  const orderNo = document.getElementById("orderNo").value.trim();
+  const prod = document.getElementById("prodName").value.trim() || "(상품명)";
+  const filename = orderNo ? `ESD_${orderNo}_${prod}` : `ESD_${prod}`;
+
+  const html = buildEmailHTML();
+  const w = window.open("","_blank","width=1300,height=900,scrollbars=yes");
+  if(!w){ alert("팝업이 차단됐습니다. 팝업 허용 후 다시 시도해 주세요."); return; }
+
+  w.document.write(`<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<title>${filename}</title>
+<style>
+  @page { size: A4 landscape; margin: 8mm; }
+  @media print {
+    body { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+  }
+  body { margin: 0; padding: 16px; font-family: Aptos, Calibri, "Malgun Gothic", sans-serif; background: #fff; }
+  .print-btn-wrap { text-align: right; margin-bottom: 12px; }
+  .print-btn { background: #4359FF; color: #fff; border: none; border-radius: 7px; padding: 9px 20px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .print-btn:hover { background: #3248e0; }
+</style>
+</head><body>
+<div class="print-btn-wrap no-print">
+  <button class="print-btn" onclick="window.print()">🖨️ PDF로 저장 / 인쇄</button>
+</div>
+${html}
+</body></html>`);
+  w.document.close();
+}
+window.printPDF = printPDF;
 
 function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
 function flash(id){const n=document.getElementById(id);if(n){n.style.display="block";setTimeout(()=>n.style.display="none",2200);}}

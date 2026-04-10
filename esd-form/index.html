@@ -106,7 +106,6 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 .hint{font-size:11px;color:#999;margin-top:7px;line-height:1.7}
 #copyTarget{position:fixed;left:-9999px;top:0;pointer-events:none;opacity:0;width:1200px}
 @media(max-width:960px){.root{grid-template-columns:1fr}.pL{border-right:none;border-bottom:1px solid #d8d8d8;max-height:none}.pR{max-height:none}}
-
 </style>
 </head>
 <body>
@@ -139,7 +138,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 <div class="root">
 <!-- LEFT -->
 <div class="pL">
-  <div class="ib">📧 아웃룩 기본 계정을 <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="57333e303e23363b2d383932173336382233362336793438793c25">[email&#160;protected]</a></strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
+  <div class="ib">📧 아웃룩 기본 계정을 <strong>digitalzone@daoudata.co.kr</strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
 
   <div class="sh">
     <span class="sl">제품 프리셋</span>
@@ -247,8 +246,8 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
   </div>
   <div class="ep-scroll">
     <div class="ep-doc" id="epDoc">
-                  <div class="ep-hdr">
-        <div class="ep-hdr-logo"><img id="epLogoImg" src="" alt="DIGITALZONE" onerror="this.style.display='none'"></div>
+      <div class="ep-hdr">
+        <div class="ep-hdr-logo"><img id="epLogoImg" src="https://www.digitalzone.co.kr/assets/logo-digitalzone-default.png" alt="DIGITALZONE" onerror="this.style.display='none'"></div>
         <div class="ep-hdr-title" id="epTitle">ESD 주문확인서</div>
         <div class="ep-hdr-order" id="epOrderLine"></div>
       </div>
@@ -289,7 +288,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 <div id="copyTarget"></div>
 
 <!-- Firebase compat (no module needed) -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
@@ -299,6 +298,31 @@ const DEFAULT_LOGO_B64 = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHY
 const DEFAULT_LOGO_URL = "https://www.digitalzone.co.kr/assets/logo-digitalzone-default.png";
 let currentLogoSrc = DEFAULT_LOGO_B64; // used in UI (login/header)
 let emailLogoSrc = DEFAULT_LOGO_URL;   // used in email output
+
+/* ── LOGO UPLOAD ── */
+document.getElementById("logoFileInput").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    currentLogoSrc = ev.target.result;
+    emailLogoSrc = ev.target.result;
+    document.getElementById("loginLogo").src = currentLogoSrc;
+    document.getElementById("headerLogo").src = currentLogoSrc;
+    document.getElementById("epLogoImg").src = emailLogoSrc;
+    localStorage.setItem("dz_logo", currentLogoSrc);
+  };
+  reader.readAsDataURL(file);
+});
+
+/* restore saved logo */
+(function(){
+  const saved = localStorage.getItem("dz_logo");
+  if(saved){
+    currentLogoSrc = saved; emailLogoSrc = saved;
+    document.getElementById("loginLogo").src = saved;
+  }
+})();
 
 /* ── LOGIN ── */
 function doLogin(){
@@ -312,28 +336,8 @@ function doLogin(){
     document.getElementById("loginErr").style.display = "block";
   }
 }
-
-window.addEventListener("load", function(){
-  /* restore saved logo */
-  const saved = localStorage.getItem("dz_logo");
-  if(saved){ currentLogoSrc = saved; emailLogoSrc = saved; document.getElementById("loginLogo").src = saved; }
-
-  document.getElementById("loginBtn").addEventListener("click", doLogin);
-  document.getElementById("pwInput").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
-
-  document.getElementById("logoFileInput").addEventListener("change", function(e){
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      currentLogoSrc = ev.target.result; emailLogoSrc = ev.target.result;
-      document.getElementById("loginLogo").src = currentLogoSrc;
-      if(document.getElementById("headerLogo")) document.getElementById("headerLogo").src = currentLogoSrc;
-      if(document.getElementById("epLogoImg")) document.getElementById("epLogoImg").src = emailLogoSrc;
-      localStorage.setItem("dz_logo", currentLogoSrc);
-    };
-    reader.readAsDataURL(file);
-  });
-});
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+document.getElementById("pwInput").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
 
 /* ── FIREBASE ── */
 const fbConfig = {
@@ -346,20 +350,9 @@ const fbConfig = {
 };
 let db;
 function initFirebase(){
-  try{
-    if(!firebase.apps || !firebase.apps.length){
-      firebase.initializeApp(fbConfig);
-    }
-    db = firebase.firestore();
-    loadAll();
-  }catch(e){
-    console.error("Firebase init error:", e);
-    setSB("err","✕ Firebase 오류");
-    brands = JSON.parse(JSON.stringify(DB_BRANDS));
-    brandOrder = ["ms","hc"];
-    selBrand = "ms";
-    render();
-  }
+  firebase.initializeApp(fbConfig);
+  db = firebase.firestore();
+  loadAll();
 }
 
 function setSB(s,m){const b=document.getElementById("syncBadge");b.className="sb sb-"+s;b.textContent=m;}
@@ -739,6 +732,12 @@ window.copyRichHTML=copyRichHTML;
 function copyPlain(){navigator.clipboard.writeText(getPlainBody()).then(()=>showCopied("✓ 텍스트 복사됨"));}
 window.copyPlain=copyPlain;
 
-
 function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
-function flash(id){const n=document.getElementById(id);n.styl
+function flash(id){const n=document.getElementById(id);n.style.display="block";setTimeout(()=>n.style.display="none",2200);}
+
+["orderNo","custName","custEmail","prodName","qty","swKeys"].forEach(id=>{
+  document.getElementById(id).addEventListener("input",updateCert);
+});
+</script>
+</body>
+</html>

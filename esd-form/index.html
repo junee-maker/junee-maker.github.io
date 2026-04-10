@@ -29,7 +29,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Goth
 
 /* ── MAIN ── */
 #mainApp{display:none;padding:16px}
-.ph{display:flex;align-items:center;gap:10px;margin-bottom:14px;width:1900px;margin-left:auto;margin-right:auto}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:14px;width:1800px;margin-left:auto;margin-right:auto}
 .ph-logo{height:24px;object-fit:contain}
 .pt{font-size:14px;font-weight:700;flex:1}
 .sb{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
@@ -37,12 +37,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Goth
 .sb-ing{background:#fff8e0;color:#b7791f}
 .sb-err{background:#fff0f0;color:#e53e3e}
 
-.root{display:grid;grid-template-columns:500px 1400px;gap:0;border:1px solid #ccc;border-radius:12px;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.1);margin:0 auto;width:fit-content}
+.root{display:grid;grid-template-columns:500px 1300px;gap:0;border:1px solid #ccc;border-radius:12px;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.1);margin:0 auto;width:fit-content}
 .pL{border-right:1px solid #d8d8d8;padding:20px;background:#fff;overflow-y:auto;max-height:calc(100vh - 70px)}
 .pR{background:#f5f5f5;padding:20px;display:flex;flex-direction:column;overflow-y:auto;max-height:calc(100vh - 70px)}
 
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-.sl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.09em}
+.sl{font-size:13px;font-weight:700;color:#222;letter-spacing:.01em}
 .dv{border:none;border-top:1px solid #ebebeb;margin:14px 0}
 .ro{margin-bottom:12px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
@@ -84,7 +84,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 .pvbar strong{color:#1a1a1a}
 .ep-scroll{overflow-x:hidden}
 /* Email preview — fixed 1200px */
-.ep-doc{background:#fff;width:1160px;min-width:1160px;max-width:1160px;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000;box-shadow:0 2px 16px rgba(0,0,0,.18)}
+.ep-doc{background:#fff;width:1260px;min-width:1260px;max-width:1260px;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000;box-shadow:0 2px 16px rgba(0,0,0,.18)}
 .ep-hdr{padding:24px 32px;border-bottom:2px solid #eeeeee}
 .ep-hdr-logo{text-align:right;margin-bottom:10px}
 .ep-hdr-logo img{height:34px;object-fit:contain}
@@ -166,7 +166,51 @@ document.addEventListener("keydown", function(e){
 <div class="root">
 <!-- LEFT -->
 <div class="pL">
-  <div class="ib">📧 아웃룩 기본 계정을 <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="57333e303e23363b2d383932173336382233362336793438793c25">[email&#160;protected]</a></strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
+  <div class="sh">
+    <span class="sl">증서 커스터마이즈</span>
+    <button class="btsm bss" id="custBtn" onclick="togglePanel('custPanel','custBtn');populateCustPanel()">편집</button>
+  </div>
+  <div class="panel" id="custPanel">
+    <div class="mtabs">
+      <button class="mtab on" id="ct0" onclick="setCTab(0)">브랜드 헤더</button>
+      <button class="mtab" id="ct1" onclick="setCTab(1)">하단 푸터</button>
+    </div>
+    <div id="cPane0">
+      <p style="font-size:12px;color:#999;margin-bottom:7px">선택 브랜드: <strong id="curBrandName" style="color:#1a1a1a">-</strong></p>
+      <span class="smlb">문서 제목</span><input type="text" id="custCertTitle" placeholder="ESD 주문확인서">
+      <span class="smlb">상단 로고 URL (선택)</span><input type="url" id="custLogoURL" placeholder="비워두면 디지털존 기본 로고">
+      <button class="btn bpri btsm" style="margin-top:9px;width:100%" onclick="saveBrandCust()">저장</button>
+      <p class="nok" id="brandCustNote">☁ 저장됐어요</p>
+    </div>
+    <div id="cPane1" style="display:none">
+      <span class="smlb">하단 면책 문구</span><textarea id="custDisclaimer" rows="4"></textarea>
+      <span class="smlb">고객센터 이메일</span><input type="email" id="custFooterEmail">
+      <span class="smlb">고객센터 전화번호</span><input type="tel" id="custFooterPhone" placeholder="02-6991-1250">
+      <span class="smlb">웹사이트 URL</span><input type="url" id="custFooterSite">
+      <button class="btn bpri btsm" style="margin-top:9px;width:100%" onclick="saveFooterCust()">저장</button>
+      <p class="nok" id="footerCustNote">☁ 저장됐어요</p>
+    </div>
+  </div>
+
+    <div class="dv"></div>
+
+
+  <div class="sh">
+    <span class="sl">설치 가이드</span>
+    <button class="btsm bss" id="editBtn" onclick="toggleEdit()">가이드 편집</button>
+  </div>
+  <div class="panel" id="editPanel">
+    <span class="smlb" style="margin-top:0">안내 텍스트</span>
+    <textarea id="editText" rows="4"></textarea>
+    <span class="smlb">이미지 URL (선택)</span>
+    <input type="url" id="editImg" placeholder="https://...jpg">
+    <button class="btn bpri btsm" style="margin-top:9px;width:100%" onclick="saveGuide()">저장 (클라우드 반영)</button>
+    <p class="nok" id="guideNote">☁ 저장됐어요</p>
+  </div>
+  <div id="guideDisp" style="font-size:13px;color:#666;line-height:1.7;padding:4px 0"></div>
+
+    <div class="dv"></div>
+
 
   <div class="sh">
     <span class="sl">제품 프리셋</span>
@@ -205,35 +249,8 @@ document.addEventListener("keydown", function(e){
     </div>
   </div>
 
-  <div class="dv"></div>
+    <div class="dv"></div>
 
-  <div class="sh">
-    <span class="sl">증서 커스터마이즈</span>
-    <button class="btsm bss" id="custBtn" onclick="togglePanel('custPanel','custBtn');populateCustPanel()">편집</button>
-  </div>
-  <div class="panel" id="custPanel">
-    <div class="mtabs">
-      <button class="mtab on" id="ct0" onclick="setCTab(0)">브랜드 헤더</button>
-      <button class="mtab" id="ct1" onclick="setCTab(1)">하단 푸터</button>
-    </div>
-    <div id="cPane0">
-      <p style="font-size:12px;color:#999;margin-bottom:7px">선택 브랜드: <strong id="curBrandName" style="color:#1a1a1a">-</strong></p>
-      <span class="smlb">문서 제목</span><input type="text" id="custCertTitle" placeholder="ESD 주문확인서">
-      <span class="smlb">상단 로고 URL (선택)</span><input type="url" id="custLogoURL" placeholder="비워두면 디지털존 기본 로고">
-      <button class="btn bpri btsm" style="margin-top:9px;width:100%" onclick="saveBrandCust()">저장</button>
-      <p class="nok" id="brandCustNote">☁ 저장됐어요</p>
-    </div>
-    <div id="cPane1" style="display:none">
-      <span class="smlb">하단 면책 문구</span><textarea id="custDisclaimer" rows="4"></textarea>
-      <span class="smlb">고객센터 이메일</span><input type="email" id="custFooterEmail">
-      <span class="smlb">고객센터 전화번호</span><input type="tel" id="custFooterPhone" placeholder="02-6991-1250">
-      <span class="smlb">웹사이트 URL</span><input type="url" id="custFooterSite">
-      <button class="btn bpri btsm" style="margin-top:9px;width:100%" onclick="saveFooterCust()">저장</button>
-      <p class="nok" id="footerCustNote">☁ 저장됐어요</p>
-    </div>
-  </div>
-
-  <div class="dv"></div>
 
   <div class="ro"><label>디지털존 주문번호</label><input type="text" id="orderNo" placeholder="DZ-2026-00000"></div>
   <div class="r2">
@@ -248,21 +265,6 @@ document.addEventListener("keydown", function(e){
     <p class="kc" id="keyCount"></p>
   </div>
 
-  <div class="dv"></div>
-
-  <div class="sh">
-    <span class="sl">설치 가이드</span>
-    <button class="btsm bss" id="editBtn" onclick="toggleEdit()">가이드 편집</button>
-  </div>
-  <div class="panel" id="editPanel">
-    <span class="smlb" style="margin-top:0">안내 텍스트</span>
-    <textarea id="editText" rows="4"></textarea>
-    <span class="smlb">이미지 URL (선택)</span>
-    <input type="url" id="editImg" placeholder="https://...jpg">
-    <button class="btn bpri btsm" style="margin-top:9px;width:100%" onclick="saveGuide()">저장 (클라우드 반영)</button>
-    <p class="nok" id="guideNote">☁ 저장됐어요</p>
-  </div>
-  <div id="guideDisp" style="font-size:13px;color:#666;line-height:1.7;padding:4px 0"></div>
 </div>
 
 <!-- RIGHT -->
@@ -689,8 +691,8 @@ function buildEmailHTML(){
   const csLine=`※ 디지털존 고객센터 : <a href="mailto:${settings.email}" style="color:#000;text-decoration:none">${settings.email}</a>${settings.phone?" / "+settings.phone:""}`;
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f0f0f0;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f0f0;padding:20px 0">
+<body style="margin:0;padding:0;background:none;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:none;padding:0">
 <tr><td align="center">
 <table cellpadding="0" cellspacing="0" style="background:#fff;width:100%;min-width:1000px;max-width:1200px">
   <tr><td style="padding:24px 32px;border-bottom:2px solid #eeeeee">

@@ -106,6 +106,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 .hint{font-size:11px;color:#999;margin-top:7px;line-height:1.7}
 #copyTarget{position:fixed;left:-9999px;top:0;pointer-events:none;opacity:0;width:1200px}
 @media(max-width:960px){.root{grid-template-columns:1fr}.pL{border-right:none;border-bottom:1px solid #d8d8d8;max-height:none}.pR{max-height:none}}
+
 </style>
 </head>
 <body>
@@ -117,7 +118,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
     <h2>디지털존 ESD 발송 폼</h2>
     <p>팀 내부용 — 비밀번호를 입력하세요</p>
     <input type="password" id="pwInput" placeholder="비밀번호">
-    <button class="lc-btn" id="loginBtn">로그인</button>
+    <button class="lc-btn" onclick="doLogin()">로그인</button>
     <p class="lerr" id="loginErr">비밀번호가 틀렸습니다</p>
     <div class="logo-upload-wrap">
       <p>로고가 깨질 경우 직접 업로드</p>
@@ -138,7 +139,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 <div class="root">
 <!-- LEFT -->
 <div class="pL">
-  <div class="ib">📧 아웃룩 기본 계정을 <strong>digitalzone@daoudata.co.kr</strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
+  <div class="ib">📧 아웃룩 기본 계정을 <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="57333e303e23363b2d383932173336382233362336793438793c25">[email&#160;protected]</a></strong>로 설정해 두시면 .eml 열 때 자동 적용됩니다.</div>
 
   <div class="sh">
     <span class="sl">제품 프리셋</span>
@@ -246,8 +247,8 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
   </div>
   <div class="ep-scroll">
     <div class="ep-doc" id="epDoc">
-      <div class="ep-hdr">
-        <div class="ep-hdr-logo"><img id="epLogoImg" src="https://www.digitalzone.co.kr/assets/logo-digitalzone-default.png" alt="DIGITALZONE" onerror="this.style.display='none'"></div>
+                  <div class="ep-hdr">
+        <div class="ep-hdr-logo"><img id="epLogoImg" src="" alt="DIGITALZONE" onerror="this.style.display='none'"></div>
         <div class="ep-hdr-title" id="epTitle">ESD 주문확인서</div>
         <div class="ep-hdr-order" id="epOrderLine"></div>
       </div>
@@ -288,7 +289,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 <div id="copyTarget"></div>
 
 <!-- Firebase compat (no module needed) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
@@ -299,32 +300,7 @@ const DEFAULT_LOGO_URL = "https://www.digitalzone.co.kr/assets/logo-digitalzone-
 let currentLogoSrc = DEFAULT_LOGO_B64; // used in UI (login/header)
 let emailLogoSrc = DEFAULT_LOGO_URL;   // used in email output
 
-/* ── LOGO UPLOAD ── */
-document.getElementById("logoFileInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    currentLogoSrc = ev.target.result;
-    emailLogoSrc = ev.target.result;
-    document.getElementById("loginLogo").src = currentLogoSrc;
-    document.getElementById("headerLogo").src = currentLogoSrc;
-    document.getElementById("epLogoImg").src = emailLogoSrc;
-    localStorage.setItem("dz_logo", currentLogoSrc);
-  };
-  reader.readAsDataURL(file);
-});
-
-/* restore saved logo */
-(function(){
-  const saved = localStorage.getItem("dz_logo");
-  if(saved){
-    currentLogoSrc = saved; emailLogoSrc = saved;
-    document.getElementById("loginLogo").src = saved;
-  }
-})();
-
-/* ── LOGIN ── */
+/* ── LOGIN (global function, called by onclick) ── */
 function doLogin(){
   const val = document.getElementById("pwInput").value;
   if(val === APP_PW){
@@ -334,10 +310,47 @@ function doLogin(){
     initFirebase();
   } else {
     document.getElementById("loginErr").style.display = "block";
+    document.getElementById("pwInput").value = "";
+    document.getElementById("pwInput").focus();
   }
 }
-document.getElementById("loginBtn").addEventListener("click", doLogin);
-document.getElementById("pwInput").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
+
+/* ── LOGO UPLOAD ── */
+function initLogoUpload(){
+  const el = document.getElementById("logoFileInput");
+  if(!el) return;
+  el.addEventListener("change", function(e){
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      currentLogoSrc = ev.target.result;
+      emailLogoSrc = ev.target.result;
+      document.getElementById("loginLogo").src = currentLogoSrc;
+      const hl = document.getElementById("headerLogo");
+      const el2 = document.getElementById("epLogoImg");
+      if(hl) hl.src = currentLogoSrc;
+      if(el2) el2.src = emailLogoSrc;
+      localStorage.setItem("dz_logo", currentLogoSrc);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ── RESTORE SAVED LOGO + BIND ENTER KEY ── */
+(function(){
+  const saved = localStorage.getItem("dz_logo");
+  if(saved){
+    currentLogoSrc = saved; emailLogoSrc = saved;
+    const ll = document.getElementById("loginLogo");
+    if(ll) ll.src = saved;
+  }
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && document.getElementById("loginScreen").style.display !== "none"){
+      doLogin();
+    }
+  });
+  initLogoUpload();
+})();
 
 /* ── FIREBASE ── */
 const fbConfig = {
@@ -350,9 +363,20 @@ const fbConfig = {
 };
 let db;
 function initFirebase(){
-  firebase.initializeApp(fbConfig);
-  db = firebase.firestore();
-  loadAll();
+  try {
+    if(!firebase.apps || !firebase.apps.length){
+      firebase.initializeApp(fbConfig);
+    }
+    db = firebase.firestore();
+    loadAll();
+  } catch(e){
+    console.error("Firebase error:", e);
+    setSB("err","✕ Firebase 오류 — 오프라인 모드");
+    brands = JSON.parse(JSON.stringify(DB_BRANDS));
+    brandOrder = ["ms","hc"];
+    selBrand = "ms";
+    render();
+  }
 }
 
 function setSB(s,m){const b=document.getElementById("syncBadge");b.className="sb sb-"+s;b.textContent=m;}
@@ -732,12 +756,6 @@ window.copyRichHTML=copyRichHTML;
 function copyPlain(){navigator.clipboard.writeText(getPlainBody()).then(()=>showCopied("✓ 텍스트 복사됨"));}
 window.copyPlain=copyPlain;
 
-function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
-function flash(id){const n=document.getElementById(id);n.style.display="block";setTimeout(()=>n.style.display="none",2200);}
 
-["orderNo","custName","custEmail","prodName","qty","swKeys"].forEach(id=>{
-  document.getElementById(id).addEventListener("input",updateCert);
-});
-</script>
-</body>
-</html>
+function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
+function flash(id){const n=document.getElementById(id);n.styl

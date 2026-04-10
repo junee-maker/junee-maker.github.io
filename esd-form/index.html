@@ -82,9 +82,9 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 .ep-scroll{overflow-x:auto}
 /* Email preview — fixed 1200px */
 .ep-doc{background:#fff;width:1200px;min-width:1000px;max-width:1200px;font-family:Aptos,Calibri,Helvetica,sans-serif;font-size:10pt;color:#000;box-shadow:0 2px 16px rgba(0,0,0,.18)}
-.ep-hdr{padding:24px 32px;border-bottom:2px solid #eeeeee}
-.ep-hdr-logo{text-align:right;margin-bottom:10px}
-.ep-hdr-logo img{height:34px;object-fit:contain}
+.ep-hdr{padding:24px 32px;border-bottom:2px solid #eeeeee;display:flex;align-items:flex-start;justify-content:space-between}
+.ep-hdr-left{flex:1}
+.ep-hdr-logo img{height:34px;object-fit:contain;display:block}
 .ep-hdr-title{font-weight:700;font-size:15px;margin-bottom:3px}
 .ep-hdr-order{font-size:12px;color:#555}
 .ep-body{padding:20px 32px 0}
@@ -107,6 +107,13 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
 #copyTarget{position:fixed;left:-9999px;top:0;pointer-events:none;opacity:0;width:1200px}
 @media(max-width:960px){.root{grid-template-columns:1fr}.pL{border-right:none;border-bottom:1px solid #d8d8d8;max-height:none}.pR{max-height:none}}
 
+/* ── PDF PRINT ── */
+#pdfFrame{position:fixed;left:-9999px;top:0;width:1200px;height:1px;border:none;opacity:0}
+@media print{
+  body > *{display:none!important}
+  #pdfPrintArea{display:block!important;position:fixed;top:0;left:0;width:100%;margin:0;padding:0}
+}
+#pdfPrintArea{display:none}
 </style>
 </head>
 <body>
@@ -247,10 +254,12 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
   </div>
   <div class="ep-scroll">
     <div class="ep-doc" id="epDoc">
-                  <div class="ep-hdr">
-        <div class="ep-hdr-logo"><img id="epLogoImg" src="" alt="DIGITALZONE" onerror="this.style.display='none'"></div>
-        <div class="ep-hdr-title" id="epTitle">ESD 주문확인서</div>
-        <div class="ep-hdr-order" id="epOrderLine"></div>
+            <div class="ep-hdr">
+        <div class="ep-hdr-left">
+          <div class="ep-hdr-title" id="epTitle">ESD 주문확인서</div>
+          <div class="ep-hdr-order" id="epOrderLine"></div>
+        </div>
+        <div class="ep-hdr-logo"><img id="epLogoImg" src="" alt="DIGITALZONE" onerror="this.style.display:none"></div>
       </div>
       <div class="ep-body">
         <table class="ep-tbl">
@@ -277,6 +286,7 @@ input[type=color]{width:52px;height:34px;padding:2px;border-radius:6px;cursor:po
     <button class="btn bpri" onclick="downloadEml()">📧 아웃룩으로 열기 (.eml)</button>
     <button class="btn bsec" onclick="copyRichHTML()">증서 복사 (서식 포함)</button>
     <button class="btn bsec" onclick="copyPlain()">텍스트 복사</button>
+    <button class="btn bsec" onclick="downloadPDF()">🖨️ PDF 저장</button>
     <span class="copied" id="copiedBadge"></span>
   </div>
   <p class="hint">
@@ -733,6 +743,24 @@ window.copyRichHTML=copyRichHTML;
 function copyPlain(){navigator.clipboard.writeText(getPlainBody()).then(()=>showCopied("✓ 텍스트 복사됨"));}
 window.copyPlain=copyPlain;
 
+
+function downloadPDF(){
+  const html = buildEmailHTML();
+  // Open in new window and trigger print dialog
+  const w = window.open('','_blank','width=1280,height=900');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  @page{size:A4 landscape;margin:10mm}
+  body{margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table{border-collapse:collapse}
+</style></head><body>`+ html +`<script>
+  window.onload=function(){
+    setTimeout(function(){window.print();},400);
+  };
+<\/script></body></html>`);
+  w.document.close();
+}
+window.downloadPDF=downloadPDF;
 
 function showCopied(msg){const b=document.getElementById("copiedBadge");b.textContent=msg;b.style.display="inline";setTimeout(()=>b.style.display="none",2500);}
 function flash(id){const n=document.getElementById(id);n.styl
